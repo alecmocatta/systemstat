@@ -99,6 +99,13 @@ mod tests {
     }
 
     #[test]
+    fn test_file_stats() {
+        let file_stats = PlatformImpl::new().file_stats().unwrap();
+        assert_ne!(file_stats.open, 0);
+        assert_ne!(file_stats.max, 0);
+    }
+
+    #[test]
     fn test_networks() {
         let networks = PlatformImpl::new().networks().unwrap();
         assert!(networks.values().filter(|n| n.name == "lo" || n.name == "lo0").next().unwrap().addrs.len() > 0);

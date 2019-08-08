@@ -87,6 +87,10 @@ impl Platform for PlatformImpl {
         Err(io::Error::new(io::ErrorKind::Other, "Not supported"))
     }
 
+    fn file_stats(&self) -> io::Result<FileStats> {
+        Err(io::Error::new(io::ErrorKind::Other, "Not supported"))
+    }
+
     fn networks(&self) -> io::Result<BTreeMap<String, Network>> {
         unix::networks()
     }

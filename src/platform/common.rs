@@ -68,6 +68,8 @@ pub trait Platform {
         })
     }
 
+    fn file_stats(&self) -> io::Result<FileStats>;
+
     /// Returns a map of block device statistics objects
     fn block_device_statistics(&self) -> io::Result<BTreeMap<String, BlockDeviceStats>>;
 

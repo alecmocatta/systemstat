@@ -249,6 +249,12 @@ pub struct Filesystem {
 }
 
 #[derive(Debug, Clone)]
+pub struct FileStats {
+    pub open: u64,
+    pub max: u64,
+}
+
+#[derive(Debug, Clone)]
 pub struct BlockDeviceStats {
     pub name: String,
     pub read_ios: usize,

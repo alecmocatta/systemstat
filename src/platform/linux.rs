@@ -9,6 +9,7 @@ use super::unix;
 use nom::{digit, not_line_ending, space, is_space};
 use std::str;
 use std::path::Path;
+use std::fs::File;
 
 fn read_file(path: &str) -> io::Result<String> {
     let mut s = String::new();
@@ -498,6 +499,31 @@ impl Platform for PlatformImpl {
             result.entry(blkstats.name.clone()).or_insert(blkstats);
         }
         Ok(result)
+    }
+
+    fn file_stats(&self) -> io::Result<FileStats> {
+        File::open(&Path::new("/proc/sys/fs/file-nr"))
+        .and_then(|mut f| {
+            use std::io::Read;
+            let mut buf = String::with_capacity(100);
+            f.read_to_string(&mut buf).map(|_| buf)
+        })
+        .and_then(|buf| {
+            let err =
+                || io::Error::new(io::ErrorKind::Other, "Could not parse /proc/sys/fs/file-nr");
+            let err1 = |_| err();
+            let mut files_stat = buf.split_whitespace().map(|x| x.parse().map_err(err1));
+            let (nr_files, nr_free_files, max_files): (u64, u64, u64) = (
+                files_stat.next().ok_or_else(err)??,
+                files_stat.next().ok_or_else(err)??,
+                files_stat.next().ok_or_else(err)??,
+            );
+            files_stat.next().ok_or(()).err().ok_or_else(err)?;
+            Ok(FileStats {
+                open: nr_files + nr_free_files, // nr_free_files has been 0 for a while
+                max: max_files,
+            })
+        })
     }
 
     fn networks(&self) -> io::Result<BTreeMap<String, Network>> {
