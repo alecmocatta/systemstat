@@ -3,6 +3,7 @@ use std::io::Read;
 use std::time::Duration;
 use libc::{c_ulong, c_ushort, c_uint, c_long, c_schar, c_char};
 use libc::statvfs;
+use libc::sysinfo;
 use data::*;
 use super::common::*;
 use super::unix;
@@ -587,27 +588,4 @@ impl Platform for PlatformImpl {
         };
         Ok(result)
     }
-}
-
-#[repr(C)]
-#[derive(Debug)]
-struct sysinfo {
-    uptime: c_long,
-    loads: [c_ulong; 3],
-    totalram: c_ulong,
-    freeram: c_ulong,
-    sharedram: c_ulong,
-    bufferram: c_ulong,
-    totalswap: c_ulong,
-    freeswap: c_ulong,
-    procs: c_ushort,
-    totalhigh: c_ulong,
-    freehigh: c_ulong,
-    mem_unit: c_uint,
-    padding: [c_schar; 8],
-}
-
-#[link(name = "c")]
-extern "C" {
-    fn sysinfo(info: *mut sysinfo);
 }

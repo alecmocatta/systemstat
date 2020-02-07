@@ -1,5 +1,5 @@
 use std::{io, ffi, ptr, mem};
-use libc::{c_int, getifaddrs, freeifaddrs, ifaddrs, sockaddr, sockaddr_in6, AF_INET, AF_INET6};
+use libc::{c_int, getifaddrs, getloadavg, freeifaddrs, ifaddrs, sockaddr, sockaddr_in6, AF_INET, AF_INET6};
 use data::*;
 
 pub fn load_average() -> io::Result<LoadAverage> {
@@ -59,9 +59,4 @@ fn parse_addr(aptr: *const sockaddr) -> IpAddr {
         },
         _ => IpAddr::Unsupported,
     }
-}
-
-#[link(name = "c")]
-extern "C" {
-    fn getloadavg(loadavg: *mut f64, nelem: c_int) -> c_int;
 }
